@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "901568950880",
+    "project_id": "botanical-be6d3",
+    "storage_bucket": "botanical-be6d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901568950880:android:51aed497aaaa09a9120905",
+        "android_client_info": {
+          "package_name": "com.botanical"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWu1rR6STaNlishM2gemzARD5swKf8FfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

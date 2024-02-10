@@ -1,0 +1,11 @@
+{
+    "colors": {
+        "border": "#616161",
+        "border-alt": "#9e9e9e",
+        "primary": "#00BD56",
+        "text-primary": "#2D334A",
+        "text-secondary": "#5D637A",
+        "ripple": "#a5d6a7",
+        "disabled": "#e0e0e0"
+    }
+}
