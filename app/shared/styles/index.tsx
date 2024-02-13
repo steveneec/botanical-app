@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     scrollLayout: {
         padding: 20
     },
-    text: {
+    textAccent: {
         fontFamily: 'Jakarta-Regular',
         color: theme.colors.primary
     },

@@ -33,6 +33,7 @@ export default function Input(props: props) {
         <TextInput
           {...props}
           style={[styles.input, props.icon && styles.inputWithIcon]}
+          placeholderTextColor={theme.colors.border}
         />
       </View>
       {props.helpText && <Text style={styles.helpText}>{props.helpText}</Text>}
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
   layout: {
     flexDirection: "column",
     gap: 3,
+    flexGrow: 1
   },
   inputContainer: {
     flexDirection: "row",
@@ -65,11 +67,11 @@ const styles = StyleSheet.create({
   input: {
     paddingHorizontal: 10,
     fontFamily: "Jakarta-Regular",
-    flex: 1,
     marginVertical: 5,
     fontSize: 18,
     paddingVertical: 0,
-    color: theme.colors["text-primary"]
+    color: theme.colors["text-primary"],
+    flex: 1
   },
   inputWithIcon: {
     borderLeftWidth: 1,

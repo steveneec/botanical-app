@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
-const CELL_COUNT = 5;
+const CELL_COUNT = 6;
 
 export default function AuthVerifyCode({ navigation, route }: any) {
   const [code, setCode] = useState("");
@@ -31,6 +31,7 @@ export default function AuthVerifyCode({ navigation, route }: any) {
     try {
       const confirmation = await auth().signInWithPhoneNumber(`+593${(route.params.phone as string).substring(1,10)}`);
       setConfirm(confirmation);
+      console.log("SMS sent");
     } catch (error) {
       console.log(error)
     }
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   cell: {
     width: 42,
     height: 46,
-    lineHeight: 42,
+    lineHeight: 46,
     fontSize: 32,
     borderWidth: 1,
     borderRadius: 5,

@@ -1,10 +1,17 @@
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import Navigation from "./app/navigation";
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Navigation from './app/navigation';
+import {AppContextProvider} from './app/context/AppContext';
+import {Provider} from 'react-redux';
+import store from './app/store';
 
-export default function App(){
+export default function App() {
   return (
     <SafeAreaProvider>
-      <Navigation />
+      <Provider store={store}>
+        <AppContextProvider>
+          <Navigation />
+        </AppContextProvider>
+      </Provider>
     </SafeAreaProvider>
   );
 }

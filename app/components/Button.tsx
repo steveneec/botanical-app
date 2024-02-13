@@ -1,13 +1,20 @@
-import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
-import theme from "../resources/theme-schema.json";
+import {Pressable, PressableProps, StyleSheet, Text} from 'react-native';
+import theme from '../resources/theme-schema.json';
 
 export default function Button(props: props) {
   return (
     <Pressable
       {...props}
-      style={[styles.button, styles[props.type], props.disabled && styles.disabled]}
-      android_ripple={{ color: props.disabled ? theme.colors.disabled : theme.colors.ripple }}
-    >
+      style={[
+        styles.button,
+        styles[props.type],
+        props.disabled && styles.disabled,
+        //@ts-ignore
+        props.style,
+      ]}
+      android_ripple={{
+        color: props.disabled ? theme.colors.disabled : theme.colors.ripple,
+      }}>
       <Text style={[styles.title, styles[`title_${props.type}`]]}>
         {props.title}
       </Text>
@@ -17,24 +24,24 @@ export default function Button(props: props) {
 
 interface props extends PressableProps {
   title: string;
-  type: "primary" | "outlined";
+  type: 'primary' | 'outlined';
 }
 
 const styles = StyleSheet.create({
   button: {
     padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: 'transparent',
     borderRadius: 5,
   },
   title: {
-    fontFamily: "Jakarta-SemiBold",
+    fontFamily: 'Jakarta-SemiBold',
     fontSize: 16,
   },
   title_primary: {
-    color: "white",
+    color: 'white',
   },
   title_outlined: {
     color: theme.colors.primary,
@@ -43,10 +50,10 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   outlined: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     borderColor: theme.colors.primary,
   },
   disabled: {
-    backgroundColor: theme.colors.disabled
+    backgroundColor: theme.colors.disabled,
   },
 });
