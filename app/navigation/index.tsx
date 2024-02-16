@@ -69,7 +69,7 @@ function HomeTabs() {
         };
       }}>
       {/*<Tab.Screen name="GreenHouse" component={GreenHouse} />*/}
-      <Tab.Screen name="GreenHouse" component={AssignedPlants} />
+      <Tab.Screen name="GreenHouse" component={AddMilestone} />
       <Tab.Screen name="Store" component={Store} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>

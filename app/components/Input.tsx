@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingVertical: 0,
     color: theme.colors["text-primary"],
-    flex: 1
+    flex: 1,
+    textAlignVertical: "top"
   },
   inputWithIcon: {
     borderLeftWidth: 1,
