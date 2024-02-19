@@ -12,48 +12,60 @@ import {
   hitoType,
   plantaCompradaType,
   plantaType,
+  usuarioType,
   zonaType,
 } from '../types';
 import theme from '../resources/theme-schema.json';
 import {styles as globalStyles} from '../shared/styles';
-import {
-  CaretRight,
-  ClockCountdown,
-  MapPin,
-  Plant,
-} from 'phosphor-react-native';
+import {CaretRight, ClockCountdown, MapPin, Plant} from 'phosphor-react-native';
 import {useEffect, useState} from 'react';
+import MapView from 'react-native-maps';
+import {useSelector} from 'react-redux';
+import {selectToken, selectUser} from '../store/features/authSlice';
+import {getMilestones} from '../libs/services';
+import Loading from '../components/Loading';
+import Button from '../components/Button';
 
 export default function OwnedPlantDetails({navigation, route}: any) {
   const {plant}: {plant: plantaCompradaType} = route.params;
+  const token = useSelector(selectToken);
   //@ts-ignore
-  const {id_planta}: {id_planta: plantaType} = plant;
+  const {plants}: {plants: plantaType} = plant;
   const [milestones, setMilestones] = useState<hitoType[]>([]);
+  const [loadingMilestones, setLoadingMilestones] = useState(true);
+
+  const user: usuarioType = useSelector(selectUser);
 
   useEffect(() => {
-    getMilestones();
+    _getMilestones();
+    getLatLng();
   }, []);
 
-  function getMilestones() {
-    const _milestones = new Array<hitoType>(4).fill({
-      id: 1,
-      id_planta: 1,
-      descripcion:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel quasi, nulla obcaecati explicabo excepturi maxime iure delectus. Beatae minima natus laborum maiores delectus, aut modi vitae voluptatibus facere. Beatae, sunt.',
-      descripcion_corta: 'Descripcion corta',
-      f_hito: '2024-02-10',
-      url_foto:
-        'https://mlstaticquic-a.akamaihd.net/arbol-laurel-D_NQ_NP_954957-MLU29289096504_012019-F.jpg',
-    });
+  function _getMilestones() {
+    getMilestones({plantaId: plant.id}, token)
+      .then(data => {
+        console.log(data);
+        setMilestones(data);
+        setLoadingMilestones(false);
+      })
+      .catch(error => console.log(error));
+  }
 
-    setMilestones(_milestones);
+  function getLatLng() {
+    const _coordinates = JSON.parse((plant.zones as zonaType).coordenadas);
+    return {
+      latitude: _coordinates.Lat,
+      longitude: _coordinates.Long,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
+    };
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.layout}>
       <ScrollView>
         <Image
-          source={{uri: (plant.id_planta as plantaType).url_foto}}
+          source={{uri: (plant.plants as plantaType).url_foto}}
           style={styles.image}
         />
         <View style={globalStyles.layout}>
@@ -62,22 +74,14 @@ export default function OwnedPlantDetails({navigation, route}: any) {
             <Text
               style={
                 styles.plantCName
-              }>{`${id_planta.nombre_c} (${id_planta.nombre})`}</Text>
-            <Text style={styles.plantDescription}>{id_planta.descripcion}</Text>
+              }>{`${plants.nombre_c} (${plants.nombre})`}</Text>
+            <Text style={styles.plantDescription}>{plants.descripcion}</Text>
           </View>
           <View style={styles.extraInfo}>
             <View style={styles.extraInfoRow}>
               <Plant size={18} />
               <Text style={styles.extraInfoText}>
-                {(id_planta.id_categoria as categoriaType[]).map(
-                  (category, key) =>
-                    `${category.nombre}${
-                      key <
-                      (id_planta.id_categoria as categoriaType[]).length - 1
-                        ? ', '
-                        : ''
-                    }`,
-                )}
+                {plants.categories.nombre}
               </Text>
             </View>
             <View style={styles.extraInfoRow}>
@@ -87,8 +91,8 @@ export default function OwnedPlantDetails({navigation, route}: any) {
             <View style={styles.extraInfoRow}>
               <MapPin size={18} />
               <Text style={styles.extraInfoText}>
-                {(plant.id_zona as zonaType).nombre} -{' '}
-                {(plant.id_zona as zonaType).descripcion}
+                {(plant.zones as zonaType).nombre} -{' '}
+                {(plant.zones as zonaType).descripcion}
               </Text>
             </View>
           </View>
@@ -99,6 +103,7 @@ export default function OwnedPlantDetails({navigation, route}: any) {
                 Línea de tiempo con los eventos más importantes
               </Text>
             </View>
+            {loadingMilestones && <Loading caption="Cargando tus hitos" />}
             <View style={styles.milestones}>
               {milestones.map((milestone, key) => (
                 <Milestone
@@ -110,9 +115,39 @@ export default function OwnedPlantDetails({navigation, route}: any) {
                 />
               ))}
             </View>
+            {milestones.length === 0 && !loadingMilestones && (
+              <Text style={styles.noMilestones}>
+                Al parecer aún no se actualzaron los hitos de tu planta 😢
+              </Text>
+            )}
+          </View>
+          <View>
+            <View>
+              <Text style={globalStyles.screenTitle}>Zona</Text>
+              <Text style={globalStyles.screenDescription}>
+                Tu planta se encuentra en esta zona, podrás visitarla cuando las
+                visitas guiadas se hayan habilitado
+              </Text>
+            </View>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={{height: 300, width: '100%'}}
+                liteMode
+                initialRegion={getLatLng()}
+              />
+            </View>
           </View>
         </View>
       </ScrollView>
+      {user.rol === 'manager' && (
+        <View style={globalStyles.layout}>
+          <Button
+            type="primary"
+            title="Agregar Hito"
+            onPress={() => navigation.navigate('AddMilestone', {plant})}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -128,12 +163,13 @@ function Milestone(props: props) {
       </View>
       <Pressable
         style={styles.milInfoContainer}
-        android_ripple={{color: theme.colors.ripple}}
-        onPress={() => props.onPress()}>
+        //android_ripple={{color: theme.colors.ripple}}
+        //</View>onPress={() => props.onPress()}
+      >
         <Text style={styles.milInfoDescription}>
-          {props.milestone.descripcion_corta}
+          {props.milestone.des_corta}
         </Text>
-        <CaretRight color={theme.colors.border} />
+        {/*<CaretRight color={theme.colors.border} />*/}
       </Pressable>
     </View>
   );
@@ -214,5 +250,19 @@ const styles = StyleSheet.create({
     color: theme.colors['text-secondary'],
     fontSize: 18,
     marginLeft: 15,
+  },
+  mapContainer: {
+    marginTop: 20,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  noMilestones: {
+    textAlign: 'center',
+    fontFamily: 'Jakarta-Regular',
+    color: theme.colors['text-secondary'],
+    marginBottom: 20,
+  },
+  layout: {
+    flex: 1,
   },
 });

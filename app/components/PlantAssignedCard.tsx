@@ -5,7 +5,7 @@ import {MapPin, UserCircle} from 'phosphor-react-native';
 
 export default function PlantAssignedCard(props: props) {
   //@ts-ignore
-  const {id_planta}: {id_planta: plantaType} = props.plant;
+  const {plants}: {plants: plantaType} = props.plant;
 
   return (
     <View style={styles.layout}>
@@ -21,25 +21,25 @@ export default function PlantAssignedCard(props: props) {
             style={styles.plantNameC}
             numberOfLines={
               1
-            }>{`${id_planta.nombre} (${id_planta.nombre_c})`}</Text>
+            }>{`${plants.nombre} (${plants.nombre_c})`}</Text>
           <View style={{marginTop: 20, gap: 5}}>
             <View style={styles.infoRow}>
               <UserCircle size={16} color={theme.colors.border} />
               <Text style={styles.infoRowText} numberOfLines={1}>
-                {(props.plant.id_usuario as usuarioType).nombre}{' '}
-                {(props.plant.id_usuario as usuarioType).apellido}
+                {(props.plant.users as usuarioType).nombre}{' '}
+                {(props.plant.users as usuarioType).apellido}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <MapPin size={16} color={theme.colors.border} />
               <Text style={styles.infoRowText} numberOfLines={1}>
-                {(props.plant.id_zona as zonaType).nombre} -{' '}
-                {(props.plant.id_zona as zonaType).descripcion}
+                {(props.plant.zones as zonaType).nombre} -{' '}
+                {(props.plant.zones as zonaType).descripcion}
               </Text>
             </View>
           </View>
         </View>
-        <Image source={{uri: id_planta.url_foto}} style={styles.image} />
+        <Image source={{uri: plants.url_foto}} style={styles.image} />
       </Pressable>
     </View>
   );

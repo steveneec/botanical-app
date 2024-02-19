@@ -1,0 +1,50 @@
+[
+  { "id": 1,
+    "name": "Semilla 🪴",
+    "description": "¡Siembra el futuro con nuestro plan Semilla! Inicia tu viaje hacia un mundo más verde con una planta incluida y beneficios exclusivos. Con cuidado personalizado y actualizaciones mensuales, estarás conectado con la naturaleza de una manera única. Además, disfruta de una visita anual guiada al área forestal y sé parte del cambio que queremos ver en el mundo.",
+    "plantsInclude": 1,
+    "shortDescription": "Inicia tu viaje verde con nuestro plan Semilla. Recibe una planta, cuidado personalizado y actualizaciones mensuales. Además, disfruta de una visita anual guiada al área forestal.",
+    "plantPrice": 10,
+    "price": 5,
+    "benefits": [
+      "Cuidado personalizado según el área donde se siembre",
+      "Actualizaciones mensuales del estado de tu planta",
+      "Retorno de inversión por beneficios ambientales",
+      "1 Visita anual guiada al área forestal",
+      "Incluye 1 planta"
+    ],
+    "recomended": true
+  },
+  { "id": 2,
+    "name": "Jardín 🌱",
+    "description": "¿Listo para hacer crecer tu propio oasis verde? Con nuestro plan Jardín, recibirás tres plantas para transformar tu espacio en un paraíso natural. Con cuidado personalizado y actualizaciones semanales, tu jardín florecerá como nunca antes. Y para completar la experiencia, ¡disfruta de tres visitas anuales guiadas al área forestal para inspirarte aún más en tu viaje verde!",
+    "plantsInclude": 3,
+    "shortDescription": "Haz crecer tu propio paraíso con nuestro plan Jardín. Recibe tres plantas, cuidado personalizado y actualizaciones semanales. Disfruta de tres visitas anuales guiadas al área forestal para inspirarte aún más.",
+    "plantPrice": 7,
+    "price": 7,
+    "benefits": [
+      "Cuidado personalizado según el área donde se siembre",
+      "Actualizaciones semanales del estado de tu planta",
+      "Retorno de inversión por beneficios ambientales",
+      "3 Visitas anuales guiadas al área forestal",
+      "Incluye 3 plantas"
+    ],
+    "recomended": false
+  },
+  { "id": 3,
+    "name": "Bosque 🌳",
+    "description": "¡Hazte cargo y construye tu propio bosque con nuestro plan Bosque! Con cinco plantas incluidas y actualizaciones diarias, serás testigo del crecimiento de tu propio ecosistema personal. Con cuidado personalizado y diez visitas anuales guiadas al área forestal, estarás inmerso en la belleza y la vitalidad de la naturaleza. Únete a nosotros y haz una diferencia real en el mundo, mientras disfrutas de un retorno de inversión por beneficios ambientale",
+    "plantsInclude": 5,
+    "shortDescription": "Construye tu propio ecosistema con nuestro plan Bosque. Recibe cinco plantas, actualizaciones diarias y diez visitas anuales guiadas. Únete a nosotros y haz una diferencia real mientras disfrutas de un retorno de inversión por beneficios ambientales.",
+    "plantPrice": 5,
+    "price": 10,
+    "benefits": [
+      "Cuidado personalizado según el área donde se siembre",
+      "Actualizaciones diarias del estado de tu planta",
+      "Retorno de inversión por beneficios ambientales",
+      "10 Visitas anuales guiadas al área forestal",
+      "Incluye 5 plantas"
+    ],
+    "recomended": false
+  }
+]

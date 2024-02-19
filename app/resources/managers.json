@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "nombre": "Esteban",
+    "apellido": "Zambrano",
+    "email": "",
+    "telefono": "0999999999",
+    "rol": "manager",
+    "zonesId": 3
+  },
+  {
+    "id": 2,
+    "nombre": "Nicolas",
+    "apellido": "Barrios",
+    "email": "",
+    "telefono": "0999999998",
+    "rol": "manager",
+    "zonesId": 2
+  },
+  {
+    "id": 3,
+    "nombre": "Ariana",
+    "apellido": "Arauz",
+    "email": "",
+    "telefono": "0999999997",
+    "rol": "manager",
+    "zonesId": 1
+  },
+  {
+    "id": 4,
+    "nombre": "Pedro Jose",
+    "apellido": "Aguirre",
+    "email": "",
+    "telefono": "0999999996",
+    "rol": "manager",
+    "zonesId": 3
+  },
+  {
+    "id": 5,
+    "nombre": "Danilo",
+    "apellido": "Segovia",
+    "email": "",
+    "telefono": "0999999995",
+    "rol": "manager",
+    "zonesId": 2
+  },
+  {
+    "id": 6,
+    "nombre": "Alejandra",
+    "apellido": "Montalvo",
+    "email": "",
+    "telefono": "0999999994",
+    "rol": "manager",
+    "zonesId": 1
+  }
+]

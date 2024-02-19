@@ -4,8 +4,9 @@ export type plantaType = {
     nombre_c: string;
     descripcion: string;
     url_foto: string;
-    id_categoria: categoriaType[] | number;
+    categories: categoriaType;
     precio?: number;
+    discount?: number;
 }
 
 export type categoriaType = {
@@ -16,10 +17,10 @@ export type categoriaType = {
 export type plantaCompradaType = {
     id: number;
     apodo: string;
-    id_planta: plantaType | number;
-    id_usuario: usuarioType | number;
+    plants: plantaType | number;
+    users: usuarioType | number;
     encargado: usuarioType | number;
-    id_zona: zonaType | number;
+    zones: zonaType | number;
 }
 
 export type zonaType = {
@@ -38,7 +39,7 @@ export type usuarioType = {
     rol: string;
     f_nac: string;
     genero: string;
-    id_planes: string | number;
+    plansId: number;
 }
 
 export type planType = {
@@ -57,8 +58,27 @@ export type precioType = {
 export type hitoType = {
     id: number;
     descripcion: string;
-    descripcion_corta: string;
+    des_corta: string;
     f_hito: string;
     url_foto: string;
     id_planta: planType | number;
+}
+
+export type planDetail = {
+    id: number,
+    name: string,
+    description: string,
+    shortDescription: string,
+    plantsInclude: number,
+    plantPrice: number,
+    price: number,
+    benefits: string[]
+}
+
+export type billType = {
+    f_compra: string,
+    tipo_compra: "plan" | "plant",
+    plansId?: number,
+    plants?: plantaType;
+    total: number
 }

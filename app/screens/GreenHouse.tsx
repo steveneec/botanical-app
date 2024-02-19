@@ -2,50 +2,43 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles as globalStyles} from '../shared/styles';
 import {useEffect, useState} from 'react';
-import {plantaCompradaType} from '../types';
+import {plantaCompradaType, usuarioType} from '../types';
 import PlantGHCard from '../components/PlantGHCard';
+import { getPlantsByUser } from '../libs/services';
+import { useSelector } from 'react-redux';
+import { selectToken, selectUser } from '../store/features/authSlice';
+import Loading from '../components/Loading';
 
 export default function GreenHouse({navigation}: any) {
   const [plants, setPlants] = useState<plantaCompradaType[]>([]);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState(null);
+
+  const user: usuarioType = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     getPlantas();
   }, []);
 
   function getPlantas() {
-    //use mocks
-    const _plants = new Array<plantaCompradaType>(10).fill({
-      id: 1,
-      apodo: 'Lau 🌱',
-      id_planta: {
-        id: 1,
-        nombre: 'Laurel',
-        nombre_c: 'Laurus Nobilis',
-        descripcion:
-          'El laurel (Laurus nobilis) es una especie de planta perenne de la familia de las lauráceas originaria de la región del mar Mediterráneo y de la mitad norte de la costa atlántica de la península ibérica. Sus hojas son utilizadas con fines medicinales y en la cocina.',
-        url_foto:
-          'https://cdn.britannica.com/62/184662-050-433A27B8/Bay-laurel.jpg',
-        id_categoria: [
-          {id: 1, nombre: 'Maderable'},
-          {id: 2, nombre: 'Medicinal'},
-        ],
-      },
-      id_usuario: 1,
-      encargado: 1,
-      id_zona: {
-        id: 1,
-        nombre: 'Z001',
-        descripcion: 'Quito',
-        coordenadas: '',
-      },
-    });
-
-    setPlants(_plants);
+    console.log(token);
+    setReady(false);
+    getPlantsByUser({userId: `${user.id}`}, token)
+    .then(data => {
+      console.log(data);
+      setPlants(data);
+      setReady(true);
+      
+    })
+    .catch(error => console.log(error))
   }
 
   function onSeePlant(plant: plantaCompradaType) {
     navigation.navigate('OwnedPlantDetails', {plant});
   }
+
+  if(!ready) return <Loading fullscreen/>
 
   return (
     <SafeAreaView>

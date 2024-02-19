@@ -9,12 +9,13 @@ import {plantaCompradaType, plantaType, zonaType} from '../types';
 import LinearGradient from 'react-native-linear-gradient';
 import theme from '../resources/theme-schema.json';
 import {MapPin} from 'phosphor-react-native';
+import { useEffect } from 'react';
 
 export default function PlantGHCard(props: props) {
   return (
     <ImageBackground
       source={{
-        uri: (props.plant.id_planta as plantaType).url_foto,
+        uri: (props.plant.plants as plantaType).url_foto,
       }}
       resizeMode="cover"
       style={styles.card}>
@@ -26,13 +27,13 @@ export default function PlantGHCard(props: props) {
           <View style={styles.plantInfoContainer}>
             <Text style={styles.plantAlias}>{props.plant.apodo}</Text>
             <Text style={styles.plantName}>{`${
-              (props.plant.id_planta as plantaType).nombre_c
-            } (${(props.plant.id_planta as plantaType).nombre})`}</Text>
+              (props.plant.plants as plantaType).nombre_c
+            } (${(props.plant.plants as plantaType).nombre})`}</Text>
             <View style={styles.plantZone}>
               <MapPin color="white" size={14} />
               <Text style={styles.plantZoneName}>
-                {(props.plant.id_zona as zonaType).nombre} -{' '}
-                {(props.plant.id_zona as zonaType).descripcion}
+                {(props.plant.zones as zonaType).nombre} -{' '}
+                {(props.plant.zones as zonaType).descripcion}
               </Text>
             </View>
           </View>

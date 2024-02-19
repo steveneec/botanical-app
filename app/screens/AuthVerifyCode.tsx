@@ -1,39 +1,54 @@
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { styles as globalStyles } from "../shared/styles";
-import theme from "../resources/theme-schema.json";
+import {StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {styles as globalStyles} from '../shared/styles';
+import theme from '../resources/theme-schema.json';
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
-} from "react-native-confirmation-code-field";
-import { useEffect, useState } from "react";
-import Button from "../components/Button";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+} from 'react-native-confirmation-code-field';
+import {useEffect, useState} from 'react';
+import Button from '../components/Button';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import Loading from '../components/Loading';
+import managers from '../resources/managers.json';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectUser, setSigned, setUser} from '../store/features/authSlice';
+import {usuarioType} from '../types';
+import {saveObject} from '../libs/storage';
 
 const CELL_COUNT = 6;
 
-export default function AuthVerifyCode({ navigation, route }: any) {
-  const [code, setCode] = useState("");
-  const ref = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
-  const [confirm, setConfirm] = useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
+export default function AuthVerifyCode({navigation, route}: any) {
+  const [code, setCode] = useState('');
+  const ref = useBlurOnFulfill({value: code, cellCount: CELL_COUNT});
+  const [confirm, setConfirm] = useState<
+    FirebaseAuthTypes.ConfirmationResult | null | boolean
+  >(null);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
     setValue: setCode,
   });
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     sendSMS();
-  },[])
+  }, []);
 
-  async function sendSMS(){
-    try {
-      const confirmation = await auth().signInWithPhoneNumber(`+593${(route.params.phone as string).substring(1,10)}`);
-      setConfirm(confirmation);
-      console.log("SMS sent");
-    } catch (error) {
-      console.log(error)
+  async function sendSMS() {
+    if (!checkIfManager()) {
+      try {
+        const confirmation = await auth().signInWithPhoneNumber(
+          `+593${(route.params.phone as string).substring(1, 10)}`,
+        );
+        setConfirm(confirmation);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setConfirm(true);
     }
   }
 
@@ -41,13 +56,32 @@ export default function AuthVerifyCode({ navigation, route }: any) {
     return code.length === CELL_COUNT;
   }
 
-  async function onContinue(){
-    try {
-      await confirm?.confirm(code);
-    } catch (error) {
-      console.log(error);
+  async function onContinue() {
+    const _user = checkIfManager();
+    if (!_user) {
+      try {
+        //@ts-ignore
+        await confirm?.confirm(code);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      dispatch(setUser(_user));
+      await saveObject({key: 'user', value: _user});
+      dispatch(setSigned(true));
     }
   }
+
+  function checkIfManager() {
+    const {phone} = route.params;
+    const manager = managers.filter(x => x.telefono === phone);
+    return manager[0] ? manager[0] : null;
+  }
+
+  if (!confirm)
+    return (
+      <Loading fullscreen caption="Estamos enviando un SMS a tu celular 🌱😎" />
+    );
 
   return (
     <SafeAreaView>
@@ -56,7 +90,7 @@ export default function AuthVerifyCode({ navigation, route }: any) {
           Verificación de número de teléfono
         </Text>
         <Text style={styles.phoneCaption}>
-          Ingresa el código de 5 dígitos que enviamos al número{" "}
+          Ingresa el código de 5 dígitos que enviamos al número{' '}
           <Text style={styles.phoneNumber}>{route.params.phone}</Text>
         </Text>
         <CodeField
@@ -68,22 +102,26 @@ export default function AuthVerifyCode({ navigation, route }: any) {
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }) => (
+          renderCell={({index, symbol, isFocused}) => (
             <Text
               key={index}
               style={[styles.cell, isFocused && styles.focusCell]}
-              onLayout={getCellOnLayoutHandler(index)}
-            >
+              onLayout={getCellOnLayoutHandler(index)}>
               {symbol || (isFocused ? <Cursor /> : null)}
             </Text>
           )}
         />
         <View>
-          <Button title="Continuar" type="primary" disabled={!checkCode()} onPress={onContinue}/>
+          <Button
+            title="Continuar"
+            type="primary"
+            disabled={!checkCode()}
+            onPress={onContinue}
+          />
         </View>
         <Text style={styles.badNumber}>
           ¿<Text style={styles.phoneNumber}>{route.params.phone}</Text> no es tu
-          número de teléfono?.{" "}
+          número de teléfono?.{' '}
           <Text style={styles.editNumber}>Corregir número.</Text>
         </Text>
       </View>
@@ -93,14 +131,14 @@ export default function AuthVerifyCode({ navigation, route }: any) {
 
 const styles = StyleSheet.create({
   codeCaption: {
-    fontFamily: "Jakarta-SemiBold",
+    fontFamily: 'Jakarta-SemiBold',
     fontSize: 24,
-    color: theme.colors["text-primary"],
+    color: theme.colors['text-primary'],
   },
   codeFieldRoot: {
-    justifyContent: "center",
+    justifyContent: 'center',
     gap: 10,
-    alignSelf: "center",
+    alignSelf: 'center',
     marginVertical: 20,
   },
   cell: {
@@ -110,29 +148,29 @@ const styles = StyleSheet.create({
     fontSize: 32,
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: theme.colors["border-alt"],
-    textAlign: "center",
-    fontFamily: "Jakarta-Medium",
-    color: theme.colors["text-primary"],
+    borderColor: theme.colors['border-alt'],
+    textAlign: 'center',
+    fontFamily: 'Jakarta-Medium',
+    color: theme.colors['text-primary'],
   },
   focusCell: {
     borderColor: theme.colors.primary,
   },
   phoneCaption: {
-    fontFamily: "Jakarta-Regular",
-    color: theme.colors["text-secondary"],
+    fontFamily: 'Jakarta-Regular',
+    color: theme.colors['text-secondary'],
   },
   phoneNumber: {
     color: theme.colors.primary,
-    fontFamily: "Jakarta-SemiBold",
+    fontFamily: 'Jakarta-SemiBold',
   },
   badNumber: {
     marginTop: 10,
-    textAlign: "center",
-    color: theme.colors["text-secondary"],
+    textAlign: 'center',
+    color: theme.colors['text-secondary'],
   },
   editNumber: {
-    fontFamily: "Jakarta-SemiBold",
+    fontFamily: 'Jakarta-SemiBold',
     color: theme.colors.primary,
   },
 });

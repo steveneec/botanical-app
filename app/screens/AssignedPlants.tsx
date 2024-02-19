@@ -2,60 +2,32 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles as globalStyles} from '../shared/styles';
 import theme from '../resources/theme-schema.json';
-import {plantaCompradaType} from '../types';
+import {plantaCompradaType, usuarioType} from '../types';
 import {useEffect, useState} from 'react';
 import PlantAssignedCard from '../components/PlantAssignedCard';
+import { getAssignedPlants, getStorePopularPlants } from '../libs/services';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/features/authSlice';
 
 export default function AssignedPlants({navigation}: any) {
   const [plants, setPlants] = useState<plantaCompradaType[]>([]);
+  const user: usuarioType = useSelector(selectUser)
 
   useEffect(() => {
     getPlantas();
   }, []);
 
   function getPlantas() {
-    //use mocks
-    const _plants = new Array<plantaCompradaType>(10).fill({
-      id: 1,
-      apodo: 'Lau 🌱',
-      id_planta: {
-        id: 1,
-        nombre: 'Laurel',
-        nombre_c: 'Laurus Nobilis',
-        descripcion:
-          'El laurel (Laurus nobilis) es una especie de planta perenne de la familia de las lauráceas originaria de la región del mar Mediterráneo y de la mitad norte de la costa atlántica de la península ibérica. Sus hojas son utilizadas con fines medicinales y en la cocina.',
-        url_foto:
-          'https://cdn.britannica.com/62/184662-050-433A27B8/Bay-laurel.jpg',
-        id_categoria: [
-          {id: 1, nombre: 'Maderable'},
-          {id: 2, nombre: 'Medicinal'},
-        ],
-      },
-      id_usuario: {
-        id: 1,
-        nombre: 'Steven',
-        apellido: 'Erraez',
-        id_planes: 1,
-        rol: '',
-        telefono: '',
-        genero: '',
-        f_nac: '',
-        email: '',
-      },
-      encargado: 1,
-      id_zona: {
-        id: 1,
-        nombre: 'Z001',
-        descripcion: 'Quito',
-        coordenadas: '',
-      },
-    });
-
-    setPlants(_plants);
+    getAssignedPlants({managerId: user.id})
+    .then(data => {
+      console.log(data[0]);
+      setPlants(data)
+    })
+    .catch(error => console.log(error))
   }
 
-  function handleOnSeePlant(plant: plantaCompradaType) {
-    navigation.navigate('PlantAssignedDetail', {plant});
+  function handleOnSeePlant(plant: any) {
+    navigation.navigate('OwnedPlantDetails', {plant});
   }
 
   return (

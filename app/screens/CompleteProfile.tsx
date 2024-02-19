@@ -7,6 +7,11 @@ import {At} from 'phosphor-react-native';
 import {useState} from 'react';
 import Dropdown from '../components/Dropdown';
 import DatePick from '../components/DatePick';
+import {register} from '../libs/services';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectRNUser, setToken, setUser} from '../store/features/authSlice';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { saveObject, saveString } from '../libs/storage';
 
 export default function CompleteProfile() {
   const [gender, setGender] = useState('');
@@ -16,6 +21,10 @@ export default function CompleteProfile() {
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
+
+  const rnUser: FirebaseAuthTypes.User = useSelector(selectRNUser);
+
+  const dispatch = useDispatch()
 
   const genders: {label: string; value: string}[] = [
     {label: 'Hombre', value: 'male'},
@@ -43,8 +52,29 @@ export default function CompleteProfile() {
       : true;
   }
 
-  function handleOnContinue(){
-    //TODO
+  async function handleOnContinue() {
+    try {
+      const result = await register({
+        nombre: name,
+        apellido: lastname,
+        email,
+        telefono: rnUser.phoneNumber,
+        genero: gender,
+        f_nac: bornDate,
+        uid: rnUser.uid
+      });
+      
+      //Save local storge
+      saveString({key: "token", value: result.token});
+      saveObject({key: "user", value: result.user.userInfo});
+
+      //Set store data
+      dispatch(setToken(result.token));
+      dispatch(setUser(result.user.userInfo));
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -84,7 +114,7 @@ export default function CompleteProfile() {
           />
         </View>
         <View>
-          <Button title="Continuar" type="primary" disabled={!checkForm()} />
+          <Button title="Continuar" type="primary" disabled={!checkForm()} onPress={handleOnContinue} />
         </View>
       </ScrollView>
     </SafeAreaView>

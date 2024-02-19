@@ -4,7 +4,6 @@ import AuthNumber from '../screens/AuthNumber';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthVerifyCode from '../screens/AuthVerifyCode';
 import CompleteProfile from '../screens/CompleteProfile';
-import auth from '@react-native-firebase/auth';
 import GreenHouse from '../screens/GreenHouse';
 import theme from '../resources/theme-schema.json';
 import {IconContext, Plant, ShoppingCart, User} from 'phosphor-react-native';
@@ -16,15 +15,20 @@ import MilestoneDetail from '../screens/MilestoneDetail';
 import PlantDetail from '../screens/PlantDetail';
 import Checkout from '../screens/Checkout';
 import {useSelector} from 'react-redux';
-import {selectSigned} from '../store/features/authSlice';
+import {selectSigned, selectUser} from '../store/features/authSlice';
 import AddMilestone from '../screens/AddMilestone';
 import AssignedPlants from '../screens/AssignedPlants';
 import PlantAssignedDetail from '../screens/PlantAssignedDetail';
+import CategoryStore from '../screens/CategoryStore';
+import Success from '../screens/Sucess';
+import Bills from '../screens/Bills';
+import {usuarioType} from '../types';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function HomeTabs() {
+  const user: usuarioType = useSelector(selectUser);
   return (
     <Tab.Navigator
       screenOptions={({route}) => {
@@ -40,6 +44,9 @@ function HomeTabs() {
             }
             if (route.name === 'Profile') {
               icon = <User />;
+            }
+            if (route.name === 'AssignedPlants'){
+              icon = <Plant/>
             }
             return (
               <IconContext.Provider
@@ -68,10 +75,18 @@ function HomeTabs() {
           },
         };
       }}>
-      {/*<Tab.Screen name="GreenHouse" component={GreenHouse} />*/}
-      <Tab.Screen name="GreenHouse" component={AddMilestone} />
-      <Tab.Screen name="Store" component={Store} />
-      <Tab.Screen name="Profile" component={Profile} />
+      {user && user.rol === 'manager' ? (
+        <>
+          <Tab.Screen name="AssignedPlants" component={AssignedPlants} />
+          <Tab.Screen name="Profile" component={Profile} />
+        </>
+      ) : (
+        <>
+          <Tab.Screen name="GreenHouse" component={GreenHouse} />
+          <Tab.Screen name="Store" component={Store} />
+          <Tab.Screen name="Profile" component={Profile} />
+        </>
+      )}
     </Tab.Navigator>
   );
 }
@@ -87,6 +102,7 @@ const MyTheme = {
 
 export default function Navigation() {
   const signed = useSelector(selectSigned);
+  const user = useSelector(selectUser);
 
   return (
     <NavigationContainer theme={MyTheme}>
@@ -97,8 +113,7 @@ export default function Navigation() {
             <Stack.Screen name="AuthNumber" component={AuthNumber} />
             <Stack.Screen name="AuthVerifyCode" component={AuthVerifyCode} />
           </Stack.Group>
-        ) : (
-          //<Stack.Screen name="CompleteProfile" component={CompleteProfile} />
+        ) : user ? (
           <Stack.Group>
             <Stack.Screen name="Home" component={HomeTabs} />
             <Stack.Screen
@@ -129,6 +144,30 @@ export default function Navigation() {
               component={PlantAssignedDetail}
               options={{headerShown: true, headerTitle: 'Detalles de Planta'}}
             />
+            <Stack.Screen
+              name="CategoryStore"
+              component={CategoryStore}
+              options={{headerShown: true, headerTitle: 'Tienda - Categoría'}}
+            />
+            <Stack.Screen
+              name="Success"
+              component={Success}
+              options={{headerShown: true, headerTitle: ''}}
+            />
+            <Stack.Screen
+              name="Bills"
+              component={Bills}
+              options={{headerShown: true, headerTitle: 'Historial de compras'}}
+            />
+            <Stack.Screen
+              name="AddMilestone"
+              component={AddMilestone}
+              options={{headerShown: true, headerTitle: 'Agregar Hito'}}
+            />
+          </Stack.Group>
+        ) : (
+          <Stack.Group>
+            <Stack.Screen name="Register" component={CompleteProfile} />
           </Stack.Group>
         )}
       </Stack.Navigator>

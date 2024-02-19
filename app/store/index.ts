@@ -3,6 +3,10 @@ import authReducer from "./features/authSlice";
 
 export default configureStore({
     reducer: {
-        auth: authReducer
-    }
+        auth: authReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })

@@ -11,48 +11,41 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles as globalStyles} from '../shared/styles';
 import theme from '../resources/theme-schema.json';
 import {useEffect, useState} from 'react';
-import {categoriaType, plantaType} from '../types';
+import {categoriaType, planDetail, plantaType, usuarioType} from '../types';
 import {
   PlantStoreCardFull,
   PlnatStoreCardSmall,
 } from '../components/PlantStoreCard';
+import {getCategories, getStorePopularPlants} from '../libs/services';
+import Loading from '../components/Loading';
+import {useSelector} from 'react-redux';
+import {selectUser} from '../store/features/authSlice';
+import plans from '../resources/plans-info.json';
+import PlanCard from '../components/PlanCard';
 
 export default function Store({navigation}: any) {
   const [plants, setPlants] = useState<plantaType[]>([]);
   const [categories, setCategories] = useState<categoriaType[]>([]);
+  const [ready, setReady] = useState(false);
+
+  const user: usuarioType = useSelector(selectUser);
 
   useEffect(() => {
-    getPlants();
-    getCategories();
+    init();
   }, []);
 
-  function getPlants() {
-    const _plants = new Array<plantaType>(5).fill({
-      id: 1,
-      nombre: 'Laurel',
-      nombre_c: 'Laurus Nobilis',
-      descripcion:
-        'El laurel (Laurus nobilis) es una especie de planta perenne de la familia de las lauráceas originaria de la región del mar Mediterráneo y de la mitad norte de la costa atlántica de la península ibérica. Sus hojas son utilizadas con fines medicinales y en la cocina.',
-      url_foto:
-        'https://cdn.britannica.com/62/184662-050-433A27B8/Bay-laurel.jpg',
-      id_categoria: [
-        {id: 1, nombre: 'Maderable'},
-        {id: 2, nombre: 'Medicinal'},
-      ],
-      precio: 10,
-    });
-
-    setPlants(_plants);
+  function init() {
+    setReady(false);
+    Promise.all([getCategories(), getStorePopularPlants()])
+      .then(data => {
+        setCategories(data[0]);
+        setPlants(data[1]);
+        setReady(true);
+      })
+      .catch(error => console.log(error));
   }
 
-  function getCategories() {
-    const _categories = new Array<categoriaType>(10).fill({
-      id: 1,
-      nombre: 'Categoria',
-    });
-
-    setCategories(_categories);
-  }
+  if (!ready) return <Loading fullscreen />;
 
   return (
     <SafeAreaView style={styles.layoutBackground}>
@@ -75,6 +68,31 @@ export default function Store({navigation}: any) {
               al momento de elegir una.
             </Text>
           </View>
+          {!user.plansId && (
+            <>
+              <View style={globalStyles.layout}>
+                <Text style={styles.sectionTitle}>Planes</Text>
+                <Text style={globalStyles.screenDescription}>
+                  Aun no estás suscrito a ningún plan, hechale un vistazo a los
+                  beneficios
+                </Text>
+              </View>
+              <ScrollView
+                horizontal
+                contentContainerStyle={{padding: 20, gap: 10}}>
+                {
+                  //@ts-ignore
+                  (plans as planDetail[]).map((plan, key) => (
+                    <PlanCard
+                      plan={plan}
+                      key={key}
+                      onPress={() => navigation.navigate('Checkout', {plan, type: "plan"})}
+                    />
+                  ))
+                }
+              </ScrollView>
+            </>
+          )}
           <View>
             <View style={globalStyles.layout}>
               <Text style={styles.sectionTitle}>Categorías</Text>
@@ -88,7 +106,10 @@ export default function Store({navigation}: any) {
                     key={key}>
                     <Pressable
                       style={styles.categoryChip}
-                      android_ripple={{color: theme.colors.ripple}}>
+                      android_ripple={{color: theme.colors.ripple}}
+                      onPress={() =>
+                        navigation.navigate('CategoryStore', {category})
+                      }>
                       <Text style={styles.caregoryChipText}>
                         {category.nombre}
                       </Text>
@@ -108,28 +129,11 @@ export default function Store({navigation}: any) {
                 <PlantStoreCardFull
                   key={key}
                   plant={plant}
-                  onPress={() => navigation.navigate('PlantDetail', {plant})}
+                  onPress={() => navigation.navigate('PlantDetail', {plant, type: "plant"})}
                 />
               ))}
             </View>
           </View>
-          <View style={[globalStyles.layout, {paddingBottom: 0}]}>
-            <Text style={styles.sectionTitle}>Recomendadas</Text>
-            <Text style={globalStyles.screenDescription}>
-              Nuestra recomendación personalizada para tí
-            </Text>
-          </View>
-          <ScrollView
-            contentContainerStyle={[globalStyles.scrollLayout, {gap: 10}]}
-            horizontal>
-            {plants.map((plant, key) => (
-              <PlnatStoreCardSmall
-                key={key}
-                plant={plant}
-                onPress={() => navigation.navigate('PlantDetail', {plant})}
-              />
-            ))}
-          </ScrollView>
         </ScrollView>
       </View>
     </SafeAreaView>

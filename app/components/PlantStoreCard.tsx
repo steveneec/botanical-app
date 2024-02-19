@@ -1,5 +1,4 @@
-import {BlurView} from '@react-native-community/blur';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {categoriaType, plantaType} from '../types';
 import theme from '../resources/theme-schema.json';
 
@@ -14,20 +13,13 @@ export function PlantStoreCardFull(props: props) {
           <Text style={stylesFull.name} numberOfLines={1}>
             {props.plant.nombre} {`(${props.plant.nombre_c})`}
           </Text>
-          <Text numberOfLines={3} style={stylesFull.description}>
+          <Text numberOfLines={4} style={stylesFull.description}>
             {props.plant.descripcion}
           </Text>
           <Text style={stylesFull.categories}>
-            {(props.plant.id_categoria as categoriaType[]).map(
-              (category, key) =>
-                `${category.nombre}${
-                  key < (props.plant.id_categoria as categoriaType[]).length - 1
-                    ? ', '
-                    : ''
-                }`,
-            )}
+            {(props.plant.categories as categoriaType).nombre}
           </Text>
-          <Text style={stylesFull.price}>${props.plant.precio}</Text>
+          {/*<Text style={stylesFull.price}>${props.plant.precio}</Text>*/}
         </View>
         <Image source={{uri: props.plant.url_foto}} style={stylesFull.image} />
       </Pressable>
@@ -50,6 +42,7 @@ const stylesFull = StyleSheet.create({
     backgroundColor: `${theme.colors.background}e0`,
   },
   image: {
+    height: 160,
     width: 160,
     borderRadius: 10,
     marginLeft: 10,
@@ -93,7 +86,7 @@ const stylesFull = StyleSheet.create({
 
 export function PlnatStoreCardSmall(props: props) {
   return (
-    <View style={stylesFull.layout}>
+    <View style={stylesSmall.layout}>
       <Pressable
         style={stylesSmall.card}
         android_ripple={{color: theme.colors.ripple}}
@@ -101,10 +94,10 @@ export function PlnatStoreCardSmall(props: props) {
         <Image source={{uri: props.plant.url_foto}} style={stylesSmall.image} />
         <View>
           <Text style={stylesSmall.name}>{props.plant.nombre}</Text>
-          <Text numberOfLines={1} style={stylesSmall.description}>
+          <Text numberOfLines={3} style={stylesSmall.description}>
             {props.plant.descripcion}
           </Text>
-          <Text style={stylesSmall.price}>${props.plant.precio}</Text>
+         {/*<Text style={stylesSmall.price}>${props.plant.precio}</Text>*/}
         </View>
       </Pressable>
     </View>
@@ -115,11 +108,11 @@ const stylesSmall = StyleSheet.create({
   layout: {
     overflow: 'hidden',
     borderRadius: 10,
+    maxWidth: Dimensions.get("window").width * 0.5 - 25,
+    width: "100%"
   },
   card: {
     padding: 10,
-    width: 200,
-    overflow: 'hidden',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'white',
@@ -127,7 +120,7 @@ const stylesSmall = StyleSheet.create({
     backgroundColor: `${theme.colors.background}e0`,
   },
   image: {
-    flex: 1,
+    width: "auto",
     height: 150,
     borderRadius: 8,
   },
