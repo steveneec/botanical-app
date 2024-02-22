@@ -25,6 +25,8 @@ import {selectToken, selectUser} from '../store/features/authSlice';
 import {getMilestones} from '../libs/services';
 import Loading from '../components/Loading';
 import Button from '../components/Button';
+import Toast from 'react-native-toast-message';
+import { delay } from '../shared';
 
 export default function OwnedPlantDetails({navigation, route}: any) {
   const {plant}: {plant: plantaCompradaType} = route.params;
@@ -37,18 +39,27 @@ export default function OwnedPlantDetails({navigation, route}: any) {
   const user: usuarioType = useSelector(selectUser);
 
   useEffect(() => {
-    _getMilestones();
-    getLatLng();
+    init();
   }, []);
+
+  async function init() {
+    await delay(1000)
+    _getMilestones();
+  }
 
   function _getMilestones() {
     getMilestones({plantaId: plant.id}, token)
       .then(data => {
-        console.log(data);
         setMilestones(data);
         setLoadingMilestones(false);
       })
-      .catch(error => console.log(error));
+      .catch(error =>
+        Toast.show({
+          type: 'error',
+          text1: 'Oops, se produjo un error 😢.',
+          text2: error.message,
+        }),
+      );
   }
 
   function getLatLng() {
@@ -84,10 +95,10 @@ export default function OwnedPlantDetails({navigation, route}: any) {
                 {plants.categories.nombre}
               </Text>
             </View>
-            <View style={styles.extraInfoRow}>
+            {/*<View style={styles.extraInfoRow}>
               <ClockCountdown size={18} />
               <Text style={styles.extraInfoText}>1 año</Text>
-            </View>
+            </View>*/}
             <View style={styles.extraInfoRow}>
               <MapPin size={18} />
               <Text style={styles.extraInfoText}>
@@ -133,7 +144,7 @@ export default function OwnedPlantDetails({navigation, route}: any) {
               <MapView
                 style={{height: 300, width: '100%'}}
                 liteMode
-                initialRegion={getLatLng()}
+                region={getLatLng()}
               />
             </View>
           </View>

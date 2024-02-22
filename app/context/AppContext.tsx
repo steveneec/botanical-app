@@ -1,18 +1,24 @@
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import React, {PropsWithChildren, useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
-import {StatusBar} from 'react-native';
+import {Alert, StatusBar} from 'react-native';
 import theme from '../resources/theme-schema.json';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
+  selectToken,
+  selectUser,
   setRNUser,
   setSigned,
   setToken,
   setUser,
 } from '../store/features/authSlice';
 import {getObject, getString, saveObject, saveString} from '../libs/storage';
-import {signin} from '../libs/services';
+import {signin, updateDeviceToken} from '../libs/services';
 import Loading from '../components/Loading';
+import messaging, {firebase} from '@react-native-firebase/messaging';
+import {PermissionsAndroid} from 'react-native';
+import {usuarioType} from '../types';
+import Toast from 'react-native-toast-message';
 
 interface AppInterface {
   onAuthStateChanged: FirebaseAuthTypes.AuthListenerCallback;
@@ -25,12 +31,83 @@ export const AppContext = React.createContext<AppInterface>({
 export function AppContextProvider(props: PropsWithChildren) {
   const [ready, setReady] = useState(false);
 
+  const user: usuarioType = useSelector(selectUser);
+  const token = useSelector(selectToken);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    requestUserPermission();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Toast.show({
+        type: "success",
+        text1: remoteMessage.notification?.title,
+        text2: remoteMessage.notification?.body
+      })
+    });
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const suscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return suscriber;
   }, []);
+
+  useEffect(() => {
+    updateToken();
+  }, [user]);
+
+  async function updateToken() {
+    if (user) {
+      if (!user.token_not && user.uid) {
+        //update token
+        const _deviceToken = await firebase.messaging().getToken();
+        updateDeviceToken({id: user.id, token_not: _deviceToken}, token)
+          .then()
+          .catch(error =>
+            Toast.show({
+              type: 'error',
+              text1: 'Error 😢',
+              text2:
+                'Ocurrió un error al intentar actualizar el token de notificaciones',
+            }),
+          );
+      }
+    }
+  }
+
+  async function getDeviceToken() {
+    const _deviceToken = await firebase.messaging().getToken();
+    if (_deviceToken) {
+      console.log('getDeviceToken:', _deviceToken);
+    } else {
+      console.log('no device token found!');
+    }
+  }
+
+  async function requestFCMPermissions() {
+    try {
+      await firebase.messaging().requestPermission();
+      getDeviceToken();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function requestUserPermission() {
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+      getDeviceToken();
+    } else {
+      requestFCMPermissions();
+    }
+
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+  }
 
   async function onAuthStateChanged(user: any) {
     if (user) {

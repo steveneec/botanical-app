@@ -20,7 +20,6 @@ export default function AssignedPlants({navigation}: any) {
   function getPlantas() {
     getAssignedPlants({managerId: user.id})
     .then(data => {
-      console.log(data[0]);
       setPlants(data)
     })
     .catch(error => console.log(error))

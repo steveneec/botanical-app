@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { styles as globalStyles } from "../shared/styles";
-import Input from "../components/Input";
-import { Phone } from "phosphor-react-native";
-import theme from "../resources/theme-schema.json";
-import Button from "../components/Button";
-import { useState } from "react";
+import {StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {styles as globalStyles} from '../shared/styles';
+import Input from '../components/Input';
+import {Phone} from 'phosphor-react-native';
+import theme from '../resources/theme-schema.json';
+import Button from '../components/Button';
+import {useState} from 'react';
 
-export default function AuthNumber({ navigation }: any) {
-  const [phoneNumber, setPhoneNumber] = useState("");
+export default function AuthNumber({navigation}: any) {
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   function checkNumber() {
     const regex = /^09/;
@@ -16,7 +16,15 @@ export default function AuthNumber({ navigation }: any) {
   }
 
   function onContinue() {
-    navigation.navigate("AuthVerifyCode", {phone: phoneNumber});
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'AuthVerifyCode',
+          params: {phone: phoneNumber},
+        },
+      ],
+    });
   }
 
   return (
@@ -31,7 +39,7 @@ export default function AuthNumber({ navigation }: any) {
             label="Número de teléfono"
             keyboardType="phone-pad"
             value={phoneNumber}
-            onChangeText={(text) => setPhoneNumber(text)}
+            onChangeText={text => setPhoneNumber(text)}
             maxLength={10}
           />
           <Text style={styles.smsCaption}>
@@ -54,13 +62,13 @@ export default function AuthNumber({ navigation }: any) {
 
 const styles = StyleSheet.create({
   authCaption: {
-    fontFamily: "Jakarta-SemiBold",
+    fontFamily: 'Jakarta-SemiBold',
     fontSize: 24,
-    color: theme.colors["text-primary"],
+    color: theme.colors['text-primary'],
   },
   smsCaption: {
-    fontFamily: "Jakarta-Regular",
-    color: theme.colors["text-secondary"],
+    fontFamily: 'Jakarta-Regular',
+    color: theme.colors['text-secondary'],
   },
   form: {
     gap: 10,

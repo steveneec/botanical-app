@@ -22,11 +22,9 @@ export default function GreenHouse({navigation}: any) {
   }, []);
 
   function getPlantas() {
-    console.log(token);
     setReady(false);
     getPlantsByUser({userId: `${user.id}`}, token)
     .then(data => {
-      console.log(data);
       setPlants(data);
       setReady(true);
       

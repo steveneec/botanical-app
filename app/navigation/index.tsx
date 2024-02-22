@@ -23,6 +23,7 @@ import CategoryStore from '../screens/CategoryStore';
 import Success from '../screens/Sucess';
 import Bills from '../screens/Bills';
 import {usuarioType} from '../types';
+import Recommendation from '../screens/Recommendation';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -164,6 +165,7 @@ export default function Navigation() {
               component={AddMilestone}
               options={{headerShown: true, headerTitle: 'Agregar Hito'}}
             />
+            <Stack.Screen name='Recommendation' component={Recommendation}/>
           </Stack.Group>
         ) : (
           <Stack.Group>

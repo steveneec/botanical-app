@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {selectUser, setSigned, setUser} from '../store/features/authSlice';
 import {usuarioType} from '../types';
 import {saveObject} from '../libs/storage';
+import Toast from 'react-native-toast-message';
 
 const CELL_COUNT = 6;
 
@@ -62,8 +63,22 @@ export default function AuthVerifyCode({navigation, route}: any) {
       try {
         //@ts-ignore
         await confirm?.confirm(code);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        console.log(error.code);
+        let message = '';
+        if (error.code === 'auth/unknown') {
+          message = 'No se envió un SMS a este número';
+        } else if (error.code === 'auth/invalid-verification-code') {
+          message = 'El código ingresado no es correcto';
+        } else {
+          message =
+            'Se produjo un error desconocido, por favor intenta más tarde 😢';
+        }
+        Toast.show({
+          type: 'error',
+          text1: 'Se produjo un error',
+          text2: message,
+        });
       }
     } else {
       dispatch(setUser(_user));
@@ -76,6 +91,17 @@ export default function AuthVerifyCode({navigation, route}: any) {
     const {phone} = route.params;
     const manager = managers.filter(x => x.telefono === phone);
     return manager[0] ? manager[0] : null;
+  }
+
+  function onFixNumber() {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'AuthNumber',
+        },
+      ],
+    });
   }
 
   if (!confirm)
@@ -122,7 +148,9 @@ export default function AuthVerifyCode({navigation, route}: any) {
         <Text style={styles.badNumber}>
           ¿<Text style={styles.phoneNumber}>{route.params.phone}</Text> no es tu
           número de teléfono?.{' '}
-          <Text style={styles.editNumber}>Corregir número.</Text>
+          <Text style={styles.editNumber} onPress={onFixNumber}>
+            Corregir número.
+          </Text>
         </Text>
       </View>
     </SafeAreaView>

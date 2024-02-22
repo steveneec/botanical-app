@@ -10,6 +10,7 @@ import {Calendar, IconContext, Plant, Star} from 'phosphor-react-native';
 import Loading from '../components/Loading';
 import theme from '../resources/theme-schema.json';
 import plans from '../resources/plans-info.json';
+import { delay } from '../shared';
 
 export default function Bills() {
   const [bills, setBills] = useState<billType[]>([]);
@@ -19,13 +20,18 @@ export default function Bills() {
   const token = useSelector(selectToken);
 
   useEffect(() => {
+    init();
+  }, []);
+
+  async function init() {
+    await delay(1000);
     getHistory(user.id, token)
       .then(data => {
         setBills(data);
         setReady(true);
       })
       .catch(error => console.log(error));
-  }, []);
+  }
 
   if (!ready) return <Loading fullscreen />;
 

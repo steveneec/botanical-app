@@ -40,6 +40,8 @@ export type usuarioType = {
     f_nac: string;
     genero: string;
     plansId: number;
+    token_not: string;
+    uid: string;
 }
 
 export type planType = {

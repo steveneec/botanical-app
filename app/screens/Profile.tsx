@@ -2,6 +2,7 @@ import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import {
+  selectToken,
   selectUser,
   setRNUser,
   setSigned,
@@ -19,12 +20,14 @@ import {
 import {usuarioType} from '../types';
 import theme from '../resources/theme-schema.json';
 import {removeStorage} from '../libs/storage';
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import {styles as globalStyles} from '../shared/styles';
 import plans from '../resources/plans-info.json';
+import { updateDeviceToken } from '../libs/services';
 
 export default function Profile({navigation}: any) {
   const user: usuarioType = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
 
   const options = [
@@ -58,6 +61,10 @@ export default function Profile({navigation}: any) {
   ];
 
   async function onSignOut() {
+    //Delete token
+    firebase.messaging().deleteToken();
+    //Update token to null in server
+    user.uid && await updateDeviceToken({id: user.id, token_not: null}, token);
     //Remove user
     await removeStorage({key: 'token'});
     await removeStorage({key: 'user'});

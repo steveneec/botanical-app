@@ -11,12 +11,12 @@ const storeBase = `${apiBase}/tienda`;
  * Store
  */
 
-export async function getStorePopularPlants() {
-  return (await axios.get(`${storeBase}/popular-plants`)).data;
+export async function getStorePopularPlants(token: string) {
+  return (await axios.get(`${storeBase}/popular-plants`, config(token))).data;
 }
 
-export async function getCategories() {
-  return (await axios.get(`${storeBase}/categories`)).data;
+export async function getCategories(token:string) {
+  return (await axios.get(`${storeBase}/categories`, config(token))).data;
 }
 
 export async function getPlantsByCategory(category: number, token: string) {
@@ -96,4 +96,14 @@ export async function getMilestones(params: any, token: string) {
 
 export async function addMilestone(params:any) {
   return (await axios.post(`${milestoneBase}/create`, params)).data;
+}
+
+/**
+ * Users
+ */
+
+const usersBase = `${apiBase}/users`
+
+export async function updateDeviceToken(params:any, token: string) {
+  return (await axios.put(`${usersBase}/updatetoken`, params, config(token))).data;
 }

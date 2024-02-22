@@ -12,16 +12,14 @@ import {styles as globalStyles} from '../shared/styles';
 import theme from '../resources/theme-schema.json';
 import {useEffect, useState} from 'react';
 import {categoriaType, planDetail, plantaType, usuarioType} from '../types';
-import {
-  PlantStoreCardFull,
-  PlnatStoreCardSmall,
-} from '../components/PlantStoreCard';
+import {PlantStoreCardFull} from '../components/PlantStoreCard';
 import {getCategories, getStorePopularPlants} from '../libs/services';
 import Loading from '../components/Loading';
 import {useSelector} from 'react-redux';
-import {selectUser} from '../store/features/authSlice';
+import {selectToken, selectUser} from '../store/features/authSlice';
 import plans from '../resources/plans-info.json';
 import PlanCard from '../components/PlanCard';
+import { delay } from '../shared';
 
 export default function Store({navigation}: any) {
   const [plants, setPlants] = useState<plantaType[]>([]);
@@ -29,14 +27,16 @@ export default function Store({navigation}: any) {
   const [ready, setReady] = useState(false);
 
   const user: usuarioType = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     init();
   }, []);
 
-  function init() {
+  async function init() {
     setReady(false);
-    Promise.all([getCategories(), getStorePopularPlants()])
+    await delay(1000);
+    Promise.all([getCategories(token), getStorePopularPlants(token)])
       .then(data => {
         setCategories(data[0]);
         setPlants(data[1]);
@@ -86,13 +86,31 @@ export default function Store({navigation}: any) {
                     <PlanCard
                       plan={plan}
                       key={key}
-                      onPress={() => navigation.navigate('Checkout', {plan, type: "plan"})}
+                      onPress={() => {
+                        navigation.navigate('Checkout', {plan, type: 'plan'});
+                      }}
                     />
                   ))
                 }
               </ScrollView>
             </>
           )}
+          <View style={globalStyles.layout}>
+            <View style={{marginBottom: 20}}>
+              <Text style={styles.sectionTitle}>Recomendación</Text>
+              <Text style={globalStyles.screenDescription}>
+                Usamos IA para recomendarte una planta segun tus gustos
+              </Text>
+            </View>
+            <View style={{borderRadius: 40, overflow: 'hidden'}}>
+              <Pressable
+                style={styles.recommendButton}
+                android_ripple={{color: theme.colors.ripple}}
+                onPress={() => navigation.navigate("Recommendation")}>
+                <Text style={styles.rbtext}>Recomiéndame una planta 🤖🌱</Text>
+              </Pressable>
+            </View>
+          </View>
           <View>
             <View style={globalStyles.layout}>
               <Text style={styles.sectionTitle}>Categorías</Text>
@@ -129,7 +147,9 @@ export default function Store({navigation}: any) {
                 <PlantStoreCardFull
                   key={key}
                   plant={plant}
-                  onPress={() => navigation.navigate('PlantDetail', {plant, type: "plant"})}
+                  onPress={() =>
+                    navigation.navigate('PlantDetail', {plant, type: 'plant'})
+                  }
                 />
               ))}
             </View>
@@ -180,5 +200,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Jakarta-Bold',
     fontSize: 18,
     lineHeight: 22,
+  },
+  recommendButton: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    borderWidth: 1,
+    backgroundColor: theme.colors['background-transparent'],
+    borderColor: theme.colors.border,
+  },
+  rbtext: {
+    fontFamily: 'Jakarta-SemiBold',
+    color: theme.colors['text-primary'],
+    fontSize: 18,
   },
 });

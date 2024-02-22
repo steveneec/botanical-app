@@ -8,6 +8,7 @@ import {selectToken} from '../store/features/authSlice';
 import {plantaType} from '../types';
 import {styles as globalStyles} from '../shared/styles';
 import {PlnatStoreCardSmall} from '../components/PlantStoreCard';
+import {delay} from '../shared';
 
 export default function CategoryStore({navigation, route}: any) {
   const [plants, setPlants] = useState<plantaType[]>([]);
@@ -15,16 +16,19 @@ export default function CategoryStore({navigation, route}: any) {
   const token = useSelector(selectToken);
 
   useEffect(() => {
-    setReady(false);
-    setTimeout(() => {
-      getPlantsByCategory(route.params.category.id, token)
-        .then(data => {
-          setPlants(data);
-          setReady(true);
-        })
-        .catch(error => console.log(error));
-    }, 1500);
+    init();
   }, []);
+
+  async function init() {
+    await delay(1000);
+    setReady(false);
+    getPlantsByCategory(route.params.category.id, token)
+      .then(data => {
+        setPlants(data);
+        setReady(true);
+      })
+      .catch(error => console.log(error));
+  }
 
   if (!ready) return <Loading fullscreen />;
 

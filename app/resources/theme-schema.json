@@ -8,6 +8,7 @@
         "ripple": "#388e3c0f",
         "disabled": "#a1aa8d",
         "background": "#E6E4D7",
-        "background-transparent": "#E6E4D7e0"
+        "background-transparent": "#E6E4D7e0",
+        "notification": "#d9d7cc"
     }
 }

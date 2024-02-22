@@ -27,8 +27,10 @@ export default function CompleteProfile() {
   const dispatch = useDispatch()
 
   const genders: {label: string; value: string}[] = [
-    {label: 'Hombre', value: 'male'},
-    {label: 'Mujer', value: 'female'},
+    {label: 'Hombre', value: 'MALE'},
+    {label: 'Mujer', value: 'FEMALE'},
+    {label: "No binario", value: "FLUID"},
+    {label: "Prefiero no decirlo", value:"UNKNOWN"}
   ];
 
   function handleOnConfirmDate(date: Date) {
