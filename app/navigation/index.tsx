@@ -7,23 +7,22 @@ import CompleteProfile from '../screens/CompleteProfile';
 import GreenHouse from '../screens/GreenHouse';
 import theme from '../resources/theme-schema.json';
 import {IconContext, Plant, ShoppingCart, User} from 'phosphor-react-native';
-import {StyleSheet, Text} from 'react-native';
+import {Text} from 'react-native';
 import Store from '../screens/Store';
 import Profile from '../screens/Profile';
 import OwnedPlantDetails from '../screens/OwnedPlantDetails';
-import MilestoneDetail from '../screens/MilestoneDetail';
 import PlantDetail from '../screens/PlantDetail';
 import Checkout from '../screens/Checkout';
 import {useSelector} from 'react-redux';
 import {selectSigned, selectUser} from '../store/features/authSlice';
 import AddMilestone from '../screens/AddMilestone';
 import AssignedPlants from '../screens/AssignedPlants';
-import PlantAssignedDetail from '../screens/PlantAssignedDetail';
 import CategoryStore from '../screens/CategoryStore';
 import Success from '../screens/Sucess';
 import Bills from '../screens/Bills';
 import {usuarioType} from '../types';
 import Recommendation from '../screens/Recommendation';
+import RecommendationResult from '../screens/RecommendationResult';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,18 +36,11 @@ function HomeTabs() {
           headerShown: false,
           tabBarIcon: ({focused, size}) => {
             let icon;
-            if (route.name === 'GreenHouse') {
-              icon = <Plant />;
-            }
-            if (route.name === 'Store') {
-              icon = <ShoppingCart />;
-            }
-            if (route.name === 'Profile') {
-              icon = <User />;
-            }
-            if (route.name === 'AssignedPlants'){
-              icon = <Plant/>
-            }
+            if (route.name === 'GreenHouse') icon = <Plant />;
+            if (route.name === 'Store') icon = <ShoppingCart />;
+            if (route.name === 'Profile') icon = <User />;
+            if (route.name === 'AssignedPlants') icon = <Plant />;
+
             return (
               <IconContext.Provider
                 value={{
@@ -62,6 +54,12 @@ function HomeTabs() {
             );
           },
           tabBarLabel: ({focused, children}) => {
+            let label = '';
+            if (route.name === 'Store') label = 'Tienda';
+            if (route.name === 'Profile') label = 'Perfil';
+            if (route.name === 'GreenHouse') label = 'Invernadero';
+            if (route.name === 'AssignedPlants') label = 'Mis plantas';
+
             return (
               <Text
                 style={{
@@ -70,7 +68,7 @@ function HomeTabs() {
                     ? theme.colors.primary
                     : theme.colors['text-primary'],
                 }}>
-                {children}
+                {label}
               </Text>
             );
           },
@@ -126,11 +124,6 @@ export default function Navigation() {
               }}
             />
             <Stack.Screen
-              name="MilestoneDetail"
-              component={MilestoneDetail}
-              options={{headerShown: true, headerTitle: 'Detalles del Hito'}}
-            />
-            <Stack.Screen
               name="PlantDetail"
               component={PlantDetail}
               options={{headerShown: true, headerTitle: 'Tienda - Detalles'}}
@@ -139,11 +132,6 @@ export default function Navigation() {
               name="Checkout"
               component={Checkout}
               options={{headerShown: true, headerTitle: 'Finalizar Compra'}}
-            />
-            <Stack.Screen
-              name="PlantAssignedDetail"
-              component={PlantAssignedDetail}
-              options={{headerShown: true, headerTitle: 'Detalles de Planta'}}
             />
             <Stack.Screen
               name="CategoryStore"
@@ -165,7 +153,11 @@ export default function Navigation() {
               component={AddMilestone}
               options={{headerShown: true, headerTitle: 'Agregar Hito'}}
             />
-            <Stack.Screen name='Recommendation' component={Recommendation}/>
+            <Stack.Screen name="Recommendation" component={Recommendation} />
+            <Stack.Screen
+              name="RecommendationResult"
+              component={RecommendationResult}
+            />
           </Stack.Group>
         ) : (
           <Stack.Group>

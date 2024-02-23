@@ -116,7 +116,7 @@ export default function AuthVerifyCode({navigation, route}: any) {
           Verificación de número de teléfono
         </Text>
         <Text style={styles.phoneCaption}>
-          Ingresa el código de 5 dígitos que enviamos al número{' '}
+          Ingresa el código de 6 dígitos que enviamos al número{' '}
           <Text style={styles.phoneNumber}>{route.params.phone}</Text>
         </Text>
         <CodeField

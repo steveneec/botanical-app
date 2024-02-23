@@ -1,0 +1,49 @@
+[
+  {
+    "question": "¿Prefieres estar rodeado de mucha gente o disfrutas más de la tranquilidad y la soledad?",
+    "answers": [
+      {"label": "soledad", "value": "soledad"},
+      {"label": "con gente", "value": "con gente"}
+    ]
+  },
+  {
+    "question": "¿Te consideras una persona enérgica y activa o tranquila y reflexiva?",
+    "answers": [
+      {"label": "energica", "value": "energica"},
+      {"label": "tranquila", "value": "tranquila"}
+    ]
+  },
+  {
+    "question": "¿Qué tipo de ambiente te hace sentir más cómodo?",
+    "answers": [
+      {"label": "urbano", "value": "urbano"},
+      {"label": "rural", "value": "rural"},
+      {"label": "natural", "value": "natural"}
+    ]
+  },
+  {
+    "question": "¿Eres más adaptable a los cambios o prefieres la estabilidad y la rutina?",
+    "answers": [
+      {"label": "cambios", "value": "cambios"},
+      {"label": "rutina", "value": "rutina"}
+    ]
+  },
+  {
+    "question": "¿Qué cualidades valoras más en ti mismo?",
+    "answers": [
+      {"label": "resistencia", "value": "resistencia"},
+      {"label": "flexibilidad", "value": "flexibilidad"},
+      {"label": "belleza", "value": "belleza"},
+      {"label": "longevidad", "value": "longevidad"},
+      {"label": "inteligencia", "value": "inteligencia"}
+    ]
+  },
+  {
+    "question": "¿Qué tipo de impacto crees que tienes en las personas que te rodean?",
+    "answers": [
+      {"label": "inspirador", "value": "inspirador"},
+      {"label": "reconfortante", "value": "reconfortante"},
+      {"label": "protector", "value": "protector"}
+    ]
+  }
+]

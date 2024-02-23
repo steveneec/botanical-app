@@ -61,11 +61,16 @@ export function AppContextProvider(props: PropsWithChildren) {
 
   async function updateToken() {
     if (user) {
+      console.log(user);
       if (!user.token_not && user.uid) {
+        console.log("Try to update token");
         //update token
         const _deviceToken = await firebase.messaging().getToken();
         updateDeviceToken({id: user.id, token_not: _deviceToken}, token)
-          .then()
+          .then(() => {
+            const _updatedUser = {...user, token_not: _deviceToken};
+            dispatch(setUser(_updatedUser));
+          })
           .catch(error =>
             Toast.show({
               type: 'error',

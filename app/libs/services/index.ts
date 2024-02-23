@@ -65,6 +65,11 @@ export async function getPlantPrice(params: any, token: string) {
     .data;
 }
 
+export async function getPlant(params: any, token: string) {
+  return (await axios.post(`${plantsBase}`, params, config(token)))
+    .data;
+}
+
 /**
  * Pagos
  */
@@ -106,4 +111,14 @@ const usersBase = `${apiBase}/users`
 
 export async function updateDeviceToken(params:any, token: string) {
   return (await axios.put(`${usersBase}/updatetoken`, params, config(token))).data;
+}
+
+/**
+ * Model
+ */
+
+const modelBase = `${apiBase}/modelo`
+
+export async function getRecomendation(params:any) {
+  return (await axios.post(`${modelBase}`, params)).data;
 }

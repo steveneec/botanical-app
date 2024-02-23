@@ -58,6 +58,9 @@ export default function Checkout({navigation, route}: any) {
   }
 
   async function onContinue() {
+
+    console.log(token);
+
     let body =
       type === 'plan'
         ? {
