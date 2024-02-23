@@ -7,6 +7,8 @@ import {enableLatestRenderer} from 'react-native-maps';
 import theme from './app/resources/theme-schema.json';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './app/shared';
+import { enableScreens } from 'react-native-screens';
+enableScreens(true);
 
 enableLatestRenderer();
 

@@ -23,6 +23,7 @@ import Bills from '../screens/Bills';
 import {usuarioType} from '../types';
 import Recommendation from '../screens/Recommendation';
 import RecommendationResult from '../screens/RecommendationResult';
+import Hello from '../screens/Hello';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -105,15 +106,15 @@ export default function Navigation() {
 
   return (
     <NavigationContainer theme={MyTheme}>
-      <Stack.Navigator
-        screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
+      <Stack.Navigator screenOptions={{headerShown: false, animation: 'slide_from_right'}}>
         {!signed ? (
-          <Stack.Group>
+          <>
+            <Stack.Screen name="Hello" component={Hello} />
             <Stack.Screen name="AuthNumber" component={AuthNumber} />
             <Stack.Screen name="AuthVerifyCode" component={AuthVerifyCode} />
-          </Stack.Group>
+          </>
         ) : user ? (
-          <Stack.Group>
+          <>
             <Stack.Screen name="Home" component={HomeTabs} />
             <Stack.Screen
               name="OwnedPlantDetails"
@@ -158,11 +159,11 @@ export default function Navigation() {
               name="RecommendationResult"
               component={RecommendationResult}
             />
-          </Stack.Group>
+          </>
         ) : (
-          <Stack.Group>
+          <>
             <Stack.Screen name="Register" component={CompleteProfile} />
-          </Stack.Group>
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,4 +1,4 @@
-import {Pressable, PressableProps, StyleSheet, Text} from 'react-native';
+import {Pressable, PressableProps, StyleSheet, Text, View} from 'react-native';
 import theme from '../resources/theme-schema.json';
 
 export default function Button(props: props) {
