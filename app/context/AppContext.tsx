@@ -70,6 +70,7 @@ export function AppContextProvider(props: PropsWithChildren) {
           .then(() => {
             const _updatedUser = {...user, token_not: _deviceToken};
             dispatch(setUser(_updatedUser));
+            saveObject({key:"user", value: _updatedUser});
           })
           .catch(error =>
             Toast.show({

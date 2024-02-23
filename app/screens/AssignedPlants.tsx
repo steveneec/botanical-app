@@ -1,28 +1,31 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {RefreshControl, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {styles as globalStyles} from '../shared/styles';
 import theme from '../resources/theme-schema.json';
 import {plantaCompradaType, usuarioType} from '../types';
 import {useEffect, useState} from 'react';
 import PlantAssignedCard from '../components/PlantAssignedCard';
-import { getAssignedPlants, getStorePopularPlants } from '../libs/services';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../store/features/authSlice';
+import {getAssignedPlants, getStorePopularPlants} from '../libs/services';
+import {useSelector} from 'react-redux';
+import {selectUser} from '../store/features/authSlice';
 
 export default function AssignedPlants({navigation}: any) {
   const [plants, setPlants] = useState<plantaCompradaType[]>([]);
-  const user: usuarioType = useSelector(selectUser)
+  const user: usuarioType = useSelector(selectUser);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getPlantas();
   }, []);
 
   function getPlantas() {
+    setLoading(true);
     getAssignedPlants({managerId: user.id})
-    .then(data => {
-      setPlants(data)
-    })
-    .catch(error => console.log(error))
+      .then(data => {
+        setPlants(data);
+        setLoading(false);
+      })
+      .catch(error => console.log(error));
   }
 
   function handleOnSeePlant(plant: any) {
@@ -31,7 +34,10 @@ export default function AssignedPlants({navigation}: any) {
 
   return (
     <SafeAreaView>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getPlantas} />
+        }>
         <View style={globalStyles.layout}>
           <Text style={globalStyles.screenTitle}>Mis plantas 🌱</Text>
           <Text style={globalStyles.screenDescription}>
